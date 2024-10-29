@@ -66,6 +66,8 @@ with st.sidebar:
     volatility = st.number_input("Volatility (σ)", value=0.2, step=0.01)
     interest_rate = st.number_input("Risk-Free Interest Rate", value=0.05, step=0.01)
     dividend_yield = st.number_input("Dividend Yield", value=0.0, step=0.01)
+    call_purchase_price = st.number_input("Call Purchase Price", value=10.0, step=0.01)
+    put_purchase_price = st.number_input("Put Purchase Price", value=5.0, step=0.01)
     
     st.markdown("---")
     st.subheader("Heatmap Parameters")
@@ -166,16 +168,16 @@ st.plotly_chart(fig, use_container_width=True)
 st.subheader("Option P&L Heatmaps")
 col1, col2 = st.columns(2)
 
-def plot_heatmap(option_type):
+def plot_pnl_heatmap(option_type, purchase_price):
     pnl = np.zeros((len(vol_range), len(spot_range)))
     for i, vol in enumerate(vol_range):
         for j, spot in enumerate(spot_range):
             bs_temp = BlackScholes(time_to_maturity, strike, spot, vol, interest_rate, dividend_yield)
             bs_temp.run()
             if option_type == 'call':
-                pnl[i, j] = bs_temp.call_price - bs_model.call_price
+                pnl[i, j] = bs_temp.calculate_pnl(purchase_price, 'call')
             else:
-                pnl[i, j] = bs_temp.put_price - bs_model.put_price
+                pnl[i, j] = bs_temp.calculate_pnl(purchase_price, 'put')
     
     fig = px.imshow(pnl, x=spot_range, y=vol_range, color_continuous_scale="RdYlGn",
                     labels=dict(x="Spot Price", y="Volatility", color="P&L"),
@@ -184,11 +186,10 @@ def plot_heatmap(option_type):
     return fig
 
 with col1:
-    st.plotly_chart(plot_heatmap('call'), use_container_width=True)
+    st.plotly_chart(plot_pnl_heatmap('call', call_purchase_price), use_container_width=True)
 
 with col2:
-    st.plotly_chart(plot_heatmap('put'), use_container_width=True)
-
+    st.plotly_chart(plot_pnl_heatmap('put', put_purchase_price), use_container_width=True)
 # Monte Carlo Simulation
 st.subheader("Monte Carlo Simulation")
 num_simulations = st.slider("Number of Simulations", min_value=1000, max_value=10000, value=5000, step=1000)
