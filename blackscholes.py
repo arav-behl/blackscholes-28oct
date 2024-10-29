@@ -103,8 +103,10 @@ class BlackScholes:
         try:
             # Adjust the range for brentq to ensure it captures the root
             implied_vol = brentq(option_price_diff, 1e-6, 3)  # Adjusted upper bound
+            self.implied_volatility = implied_vol  # Store the result
             return implied_vol
         except ValueError:
+            self.implied_volatility = None
             return None
 
 if __name__ == "__main__":

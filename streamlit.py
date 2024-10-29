@@ -83,6 +83,7 @@ st.title("Advanced Option Analytics Platform")
 # Calculate option prices and Greeks
 bs_model = BlackScholes(time_to_maturity, strike, current_price, volatility, interest_rate, dividend_yield)
 bs_model.run()
+bs_model.calculate_implied_volatility()  # Calculate and store implied volatility
 
 # Display key metrics
 col1, col2, col3, col4 = st.columns(4)
