@@ -101,8 +101,8 @@ class BlackScholes:
             return model_price - market_price
 
         try:
-            from scipy.optimize import brentq
-            implied_vol = brentq(option_price_diff, 1e-6, 10)
+            # Adjust the range for brentq to ensure it captures the root
+            implied_vol = brentq(option_price_diff, 1e-6, 3)  # Adjusted upper bound
             return implied_vol
         except ValueError:
             return None
