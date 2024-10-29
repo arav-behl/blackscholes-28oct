@@ -220,6 +220,13 @@ mc_put_price = np.mean(put_payoffs) * np.exp(-interest_rate * time_to_maturity)
 st.write(f"Monte Carlo Call Price: ${mc_call_price:.2f}")
 st.write(f"Monte Carlo Put Price: ${mc_put_price:.2f}")
 
+# Calculate implied volatility
+implied_vol = bs_model.calculate_implied_volatility()
+if implied_vol is not None and not np.isnan(implied_vol):
+    st.metric("Implied Volatility", f"{implied_vol:.4f}")
+else:
+    st.metric("Implied Volatility", "Calculation Error")
+
 # Add a footer
 st.markdown("---")
 st.markdown("Developed by [Arav Behl](https://www.linkedin.com/in/arav-behl-0524a6230/) | [GitHub](https://github.com/arav-behl)")
