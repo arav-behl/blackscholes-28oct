@@ -273,3 +273,15 @@ st.write(f"Monte Carlo Put Price: ${mc_put_price:.2f}")
 # Add a footer
 st.markdown("---")
 st.markdown("Developed by [Arav Behl](https://www.linkedin.com/in/arav-behl-0524a6230/) | [GitHub](https://github.com/arav-behl)")
+
+# Get market price from user input
+market_price = st.number_input("Option Market Price", value=10.0, step=0.01)
+
+# Calculate implied volatility
+implied_vol = bs_model.calculate_implied_volatility(market_price=market_price)
+
+# Display result
+if implied_vol is not None:
+    st.metric("Implied Volatility", f"{implied_vol:.4f}")
+else:
+    st.error("Could not calculate implied volatility. Market price may be outside theoretical bounds.")

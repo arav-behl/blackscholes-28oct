@@ -62,36 +62,22 @@ class BlackScholes:
             raise ValueError("option_type must be 'call' or 'put'")
 
     def calculate_implied_volatility(self, market_price=None, option_type='call'):
-        # Generate a range of spot prices around current price (e.g. ±30%)
-        price_range = np.linspace(self.current_price * 0.7, self.current_price * 1.3, 100)
-        
-        # Calculate theoretical option prices across price range
-        model_prices = []
-        for spot in price_range:
-            temp_model = BlackScholes(
-                self.time_to_maturity,
-                self.strike, 
-                spot,
-                self.volatility,
-                self.interest_rate,
-                self.dividend_yield
-            )
-            temp_model.run()
-            if option_type == 'call':
-                model_price = temp_model.call_price
-            else:
-                model_price = temp_model.put_price
-            model_prices.append(model_price)
-            
-        # Set hypothetical market price as average of theoretical model prices
+        """
+        Calculate implied volatility using the Newton-Raphson method.
+        market_price: The observed market price of the option
+        option_type: 'call' or 'put'
+        """
         if market_price is None:
-            market_price = np.mean(model_prices) * np.exp(-self.interest_rate * self.time_to_maturity)
+            # If no market price provided, use theoretical price (for testing)
+            self.run()
+            market_price = self.call_price if option_type == 'call' else self.put_price
 
         def option_price_diff(sigma):
+            """Calculate difference between market price and BS price for a given volatility"""
             temp_model = BlackScholes(
                 self.time_to_maturity,
                 self.strike,
-                self.current_price, 
+                self.current_price,
                 sigma,
                 self.interest_rate,
                 self.dividend_yield
@@ -101,11 +87,15 @@ class BlackScholes:
             return model_price - market_price
 
         try:
-            # Adjust the range for brentq to ensure it captures the root
-            implied_vol = brentq(option_price_diff, 1e-6, 3)  # Adjusted upper bound
-            self.implied_volatility = implied_vol  # Store the result
+            # Use brentq to find the volatility that makes theoretical price = market price
+            implied_vol = brentq(option_price_diff, 0.0001, 5.0)  # Expanded bounds
+            self.implied_volatility = implied_vol
             return implied_vol
-        except ValueError:
+        except ValueError as e:
+            # This occurs when no solution is found within the bounds
+            print(f"Could not find implied volatility: {e}")
+            print(f"Market price: {market_price}")
+            print(f"Current parameters: S={self.current_price}, K={self.strike}, T={self.time_to_maturity}, r={self.interest_rate}")
             self.implied_volatility = None
             return None
 
