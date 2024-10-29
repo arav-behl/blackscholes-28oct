@@ -83,7 +83,7 @@ st.title("Advanced Option Analytics Platform")
 # Calculate option prices and Greeks
 bs_model = BlackScholes(time_to_maturity, strike, current_price, volatility, interest_rate, dividend_yield)
 bs_model.run()
-bs_model.calculate_implied_volatility()  # Calculate and store implied volatility
+implied_vol = bs_model.calculate_implied_volatility()  # Calculate and store implied volatility
 
 # Display key metrics
 col1, col2, col3, col4 = st.columns(4)
@@ -99,11 +99,17 @@ with col4:
 # Greeks and additional metrics
 st.subheader("Option Greeks and Metrics")
 greeks_df = pd.DataFrame({
-    "Metric": ["Gamma", "Vega", "Theta", "Rho", "Implied Volatility"],
-    "Call": [bs_model.call_gamma, bs_model.call_vega, bs_model.call_theta, bs_model.call_rho, bs_model.implied_volatility],
-    "Put": [bs_model.put_gamma, bs_model.put_vega, bs_model.put_theta, bs_model.put_rho, bs_model.implied_volatility]
+    "Metric": ["Gamma", "Vega", "Theta", "Rho"],
+    "Call": [bs_model.call_gamma, bs_model.call_vega, bs_model.call_theta, bs_model.call_rho],
+    "Put": [bs_model.put_gamma, bs_model.put_vega, bs_model.put_theta, bs_model.put_rho]
 })
 st.table(greeks_df.set_index("Metric").style.format("{:.4f}"))
+
+# Display Implied Volatility separately
+if implied_vol is not None and not np.isnan(implied_vol):
+    st.metric("Implied Volatility", f"{implied_vol:.4f}")
+else:
+    st.metric("Implied Volatility", "Calculation Error")
 
 # Interactive Payoff Diagram
 st.subheader("Option Payoff Diagram")
@@ -220,13 +226,6 @@ mc_put_price = np.mean(put_payoffs) * np.exp(-interest_rate * time_to_maturity)
 
 st.write(f"Monte Carlo Call Price: ${mc_call_price:.2f}")
 st.write(f"Monte Carlo Put Price: ${mc_put_price:.2f}")
-
-# Calculate implied volatility
-implied_vol = bs_model.calculate_implied_volatility()
-if implied_vol is not None and not np.isnan(implied_vol):
-    st.metric("Implied Volatility", f"{implied_vol:.4f}")
-else:
-    st.metric("Implied Volatility", "Calculation Error")
 
 # Add a footer
 st.markdown("---")
