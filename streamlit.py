@@ -175,14 +175,44 @@ def plot_pnl_heatmap(option_type, purchase_price):
             bs_temp = BlackScholes(time_to_maturity, strike, spot, vol, interest_rate, dividend_yield)
             bs_temp.run()
             if option_type == 'call':
-                pnl[i, j] = bs_temp.calculate_pnl(purchase_price, 'call')
+                current_price = bs_temp.call_price
+                pnl[i, j] = current_price - purchase_price  # P&L = Current Value - Purchase Price
             else:
-                pnl[i, j] = bs_temp.calculate_pnl(purchase_price, 'put')
+                current_price = bs_temp.put_price
+                pnl[i, j] = current_price - purchase_price
+
+    fig = px.imshow(
+        pnl,
+        x=spot_range,
+        y=vol_range,
+        color_continuous_scale="RdYlGn",  # Red-Yellow-Green color scale
+        labels=dict(x="Spot Price", y="Volatility", color="P&L"),
+        title=f"{option_type.capitalize()} Option P&L",
+        aspect="auto"  # Maintains aspect ratio
+    )
     
-    fig = px.imshow(pnl, x=spot_range, y=vol_range, color_continuous_scale="RdYlGn",
-                    labels=dict(x="Spot Price", y="Volatility", color="P&L"),
-                    title=f"{option_type.capitalize()} Option P&L")
-    fig.update_layout(coloraxis_colorbar=dict(title="P&L"), template="plotly_dark")
+    # Update layout for better visualization
+    fig.update_layout(
+        coloraxis_colorbar=dict(
+            title="P&L",
+            tickprefix="$",
+        ),
+        template="plotly_dark",
+        xaxis_title="Spot Price",
+        yaxis_title="Volatility",
+    )
+    
+    # Add value annotations
+    for i in range(len(vol_range)):
+        for j in range(len(spot_range)):
+            fig.add_annotation(
+                x=spot_range[j],
+                y=vol_range[i],
+                text=f"{pnl[i, j]:.2f}",
+                showarrow=False,
+                font=dict(size=8, color="white")
+            )
+    
     return fig
 
 with col1:
