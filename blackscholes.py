@@ -65,8 +65,8 @@ class BlackScholes:
         # Generate a range of spot prices around current price (e.g. ±30%)
         price_range = np.linspace(self.current_price * 0.7, self.current_price * 1.3, 100)
         
-        # Calculate theoretical option prices and P&L across price range
-        payoffs = []
+        # Calculate theoretical option prices across price range
+        model_prices = []
         for spot in price_range:
             temp_model = BlackScholes(
                 self.time_to_maturity,
@@ -78,16 +78,14 @@ class BlackScholes:
             )
             temp_model.run()
             if option_type == 'call':
-                payoff = max(spot - self.strike, 0)
                 model_price = temp_model.call_price
             else:
-                payoff = max(self.strike - spot, 0)
                 model_price = temp_model.put_price
-            payoffs.append(payoff)
+            model_prices.append(model_price)
             
-        # Set hypothetical market price as average of theoretical prices
+        # Set hypothetical market price as average of theoretical model prices
         if market_price is None:
-            market_price = np.mean(payoffs) * np.exp(-self.interest_rate * self.time_to_maturity)
+            market_price = np.mean(model_prices) * np.exp(-self.interest_rate * self.time_to_maturity)
 
         def option_price_diff(sigma):
             temp_model = BlackScholes(
