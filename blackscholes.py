@@ -1,3 +1,4 @@
+import numpy as np
 from numpy import exp, sqrt, log, pi
 from scipy.stats import norm
 from scipy.optimize import brentq
