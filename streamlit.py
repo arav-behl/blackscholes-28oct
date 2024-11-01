@@ -66,20 +66,18 @@ with st.sidebar:
     current_price = st.number_input("Current Asset Price", value=100.0, step=0.01)
     strike = st.number_input("Strike Price", value=100.0, step=0.01)
     time_to_maturity = st.number_input("Time to Maturity (Years)", value=1.0, step=0.01)
+    volatility = st.number_input("Volatility (σ)", value=0.2, step=0.01)
     interest_rate = st.number_input("Risk-Free Interest Rate", value=0.05, step=0.01)
     dividend_yield = st.number_input("Dividend Yield", value=0.0, step=0.01)
     call_purchase_price = st.number_input("Call Purchase Price", value=10.0, step=0.01)
     put_purchase_price = st.number_input("Put Purchase Price", value=5.0, step=0.01)
     
-    # New input for market price
-    market_price = st.number_input("Current Market Price of the Option", value=10.0, step=0.01)
-    
     st.markdown("---")
     st.subheader("Heatmap Parameters")
     spot_min = st.number_input('Min Spot Price', min_value=0.01, value=current_price*0.8, step=0.01)
     spot_max = st.number_input('Max Spot Price', min_value=0.01, value=current_price*1.2, step=0.01)
-    vol_min = st.slider('Min Volatility', min_value=0.01, max_value=1.0, value=0.1, step=0.01)
-    vol_max = st.slider('Max Volatility', min_value=0.01, max_value=1.0, value=0.5, step=0.01)
+    vol_min = st.slider('Min Volatility', min_value=0.01, max_value=1.0, value=volatility*0.5, step=0.01)
+    vol_max = st.slider('Max Volatility', min_value=0.01, max_value=1.0, value=volatility*1.5, step=0.01)
     
     spot_range = np.linspace(spot_min, spot_max, 20)
     vol_range = np.linspace(vol_min, vol_max, 20)
@@ -90,19 +88,19 @@ st.title("Advanced Option Analytics Platform")
 # Add a concise description for users
 st.markdown("""
 Welcome to the Advanced Option Analytics Platform! Here, you can explore and analyze options by adjusting various parameters:
-- **Current Asset Price, Strike Price, Time to Maturity, Interest Rate, and Dividend Yield**: Use these inputs to calculate the Call and Put prices, along with their Greeks.
+- **Current Asset Price, Strike Price, Time to Maturity, Volatility, Interest Rate, and Dividend Yield**: Use these inputs to calculate the Call and Put prices, along with their Greeks.
 - **Heatmap Parameters**: Adjust the Min and Max Spot Price, Volatility and market price you set to visualize the P&L heatmap, showing how these factors affect option profitability.
 - **Sensitivity Analysis**: Select a parameter to see how changes impact option pricing.
 - **Monte Carlo Simulation**: Run simulations to estimate future asset prices and option values.
-- **Implied Volatility**: Automatically calculated based on the theoretical model and market prices.
+- **Implied Volatility**: Automatically calculated based on the theoretical model and market prices(taken as an avg of theoretical prices)
 
 Tweak these values to gain insights into option pricing dynamics and risk management.
 """)
 
 # Calculate option prices and Greeks
-bs_model = BlackScholes(time_to_maturity, strike, current_price, interest_rate, dividend_yield)
+bs_model = BlackScholes(time_to_maturity, strike, current_price, volatility, interest_rate, dividend_yield)
 bs_model.run()
-implied_vol = bs_model.calculate_implied_volatility(market_price=market_price)  # Calculate and store implied volatility
+implied_vol = bs_model.calculate_implied_volatility()  # Calculate and store implied volatility
 
 # Display key metrics
 col1, col2, col3, col4 = st.columns(4)
@@ -149,7 +147,7 @@ st.plotly_chart(fig, use_container_width=True)
 
 # Sensitivity Analysis
 st.subheader("Sensitivity Analysis")
-sensitivity_params = ['Spot Price', 'Time to Maturity', 'Interest Rate']
+sensitivity_params = ['Spot Price', 'Volatility', 'Time to Maturity', 'Interest Rate']
 selected_param = st.selectbox("Select parameter for sensitivity analysis", sensitivity_params)
 
 param_range = np.linspace(0.5, 1.5, 100)
@@ -158,11 +156,13 @@ put_prices = []
 
 for param in param_range:
     if selected_param == 'Spot Price':
-        bs_temp = BlackScholes(time_to_maturity, strike, current_price * param, interest_rate, dividend_yield)
+        bs_temp = BlackScholes(time_to_maturity, strike, current_price * param, volatility, interest_rate, dividend_yield)
+    elif selected_param == 'Volatility':
+        bs_temp = BlackScholes(time_to_maturity, strike, current_price, volatility * param, interest_rate, dividend_yield)
     elif selected_param == 'Time to Maturity':
-        bs_temp = BlackScholes(time_to_maturity * param, strike, current_price, interest_rate, dividend_yield)
+        bs_temp = BlackScholes(time_to_maturity * param, strike, current_price, volatility, interest_rate, dividend_yield)
     else:  # Interest Rate
-        bs_temp = BlackScholes(time_to_maturity, strike, current_price, interest_rate * param, dividend_yield)
+        bs_temp = BlackScholes(time_to_maturity, strike, current_price, volatility, interest_rate * param, dividend_yield)
     
     bs_temp.run()
     call_prices.append(bs_temp.call_price)
@@ -250,7 +250,7 @@ def simulate_price_path(S, T, r, sigma, steps):
         price_path.append(S)
     return price_path
 
-simulated_paths = [simulate_price_path(current_price, time_to_maturity, interest_rate, 0.2, num_steps) for _ in range(num_simulations)]
+simulated_paths = [simulate_price_path(current_price, time_to_maturity, interest_rate, volatility, num_steps) for _ in range(num_simulations)]
 
 fig = go.Figure()
 for path in simulated_paths[:100]:  # Plot first 100 paths
@@ -277,3 +277,15 @@ st.write(f"Monte Carlo Put Price: ${mc_put_price:.2f}")
 # Add a footer
 st.markdown("---")
 st.markdown("Developed by [Arav Behl](https://www.linkedin.com/in/arav-behl-0524a6230/) | [GitHub](https://github.com/arav-behl)")
+
+# Get market price from user input
+market_price = st.number_input("Option Market Price", value=10.0, step=0.01)
+
+# Calculate implied volatility
+implied_vol = bs_model.calculate_implied_volatility(market_price=market_price)
+
+# Display result
+if implied_vol is not None:
+    st.metric("Implied Volatility", f"{implied_vol:.4f}")
+else:
+    st.error("Could not calculate implied volatility. Market price may be outside theoretical bounds.")
