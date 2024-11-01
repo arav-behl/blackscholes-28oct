@@ -23,7 +23,7 @@ st.markdown("""
         background: #f0f2f6; /* Light background for better contrast */
     }
     .main {
-        background: #ffffff; /* White background for main content */
+        background: #f0f2f6; /* Neutral background for main content */
         color: #333333; /* Dark text for readability */
     }
     .stButton>button {
@@ -41,7 +41,7 @@ st.markdown("""
         color: #333333; /* Dark text for headings */
     }
     .sidebar .sidebar-content {
-        background-color: #f8f9fa; /* Light sidebar background */
+        background-color: #f0f2f6; /* Neutral sidebar background */
     }
     .Widget>label {
         color: #333333; /* Dark text for widget labels */
