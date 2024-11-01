@@ -73,7 +73,7 @@ with st.sidebar:
     market_price = st.number_input("Current Market Price of the Option", value=10.0, step=0.01)
     
     st.markdown("---")
-    heatmap_para = f'<p style="color:#ff4b4b; font-family:sans-serif; font-size: 32px; font-weight: bold;">📈 Advanced Option Analytics</p>'
+    heatmap_para = f'<p style="color:#ff4b4b; font-family:sans-serif; font-size: 32px; font-weight: bold;"Heatmap Parameters</p>'
     st.markdown(heatmap_para, unsafe_allow_html=True)
     spot_min = st.number_input('Min Spot Price', min_value=0.01, value=current_price*0.8, step=0.01)
     spot_max = st.number_input('Max Spot Price', min_value=0.01, value=current_price*1.2, step=0.01)
