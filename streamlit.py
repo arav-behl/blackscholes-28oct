@@ -85,11 +85,11 @@ with st.sidebar:
     vol_range = np.linspace(vol_min, vol_max, 20)
 
 # Main content
-st.markdown("<h1 style='color: #ffffff;'>Advanced Option Analytics Platform</h1>", unsafe_allow_html=True)
+st.markdown("<h1'>Advanced Option Analytics Platform</h1>", unsafe_allow_html=True)
 
 # Main sections with descriptions
 st.markdown("""
-<h2 style='color: #ffffff; font-size: 24px;'>1. Calculating Implied Volatility</h2>
+<h2 style='color: #ff4b4b; font-size: 24px;'>1. Calculating Implied Volatility</h2>
 <p style='font-size: 16px;'>Using market prices to reverse-engineer the market's expectation of future volatility. This helps us understand market sentiment and price options more accurately.</p>
 """, unsafe_allow_html=True)
 
@@ -113,7 +113,7 @@ else:
     st.metric("Implied Volatility", "Calculation Error")
 
 st.markdown("""
-<h2 style='color: #ffffff; font-size: 24px;'>2. Black-Scholes Option Pricing</h2>
+<h2 style='color: #ff4b4b; font-size: 24px;'>2. Black-Scholes Option Pricing</h2>
 <p style='font-size: 16px;'>Computing theoretical prices for both Call and Put options using the Black-Scholes model with our calculated implied volatility. This gives us a benchmark for market prices.</p>
 """, unsafe_allow_html=True)
 
@@ -125,7 +125,7 @@ with col2:
     st.metric("Put Price", f"${bs_model.put_price:.2f}")
 
 st.markdown("""
-<h2 style='color: #ffffff; font-size: 24px;'>3. Option Greeks Analysis</h2>
+<h2 style='color: #ff4b4b; font-size: 24px;'>3. Option Greeks Analysis</h2>
 <p style='font-size: 16px;'>Calculating Delta, Gamma, Vega, Theta, and Rho to understand option price sensitivity to various market factors. Essential for risk management and portfolio hedging.</p>
 """, unsafe_allow_html=True)
 
@@ -139,7 +139,7 @@ greeks_df = pd.DataFrame({
 st.table(greeks_df.set_index("Metric").style.format("{:.4f}"))
 
 st.markdown("""
-<h2 style='color: #ffffff; font-size: 24px;'>4. Option Payoff Diagram</h2>
+<h2 style='color: #ff4b4b; font-size: 24px;'>4. Option Payoff Diagram</h2>
 <p style='font-size: 16px;'>Visualizing potential profit/loss scenarios at expiration across different underlying prices. Helps understand maximum profit, loss, and breakeven points.</p>
 """, unsafe_allow_html=True)
 
@@ -161,7 +161,7 @@ fig.update_layout(
 st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("""
-<h2 style='color: #ffffff; font-size: 24px;'>5. Sensitivity Analysis</h2>
+<h2 style='color: #ff4b4b; font-size: 24px;'>5. Sensitivity Analysis</h2>
 <p style='font-size: 16px;'>Examining how option prices change with variations in key parameters. Critical for understanding option price behavior under different market conditions.</p>
 """, unsafe_allow_html=True)
 
@@ -219,7 +219,7 @@ fig.update_layout(
 st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("""
-<h2 style='color: #ffffff; font-size: 24px;'>6. Option P&L Heatmaps</h2>
+<h2 style='color: #ff4b4b; font-size: 24px;'>6. Option P&L Heatmaps</h2>
 <p style='font-size: 16px;'>Two-dimensional visualization of profit/loss across different price and volatility levels. Provides insights into option performance under various market scenarios.</p>
 """, unsafe_allow_html=True)
 
@@ -290,7 +290,7 @@ with col2:
     st.plotly_chart(plot_pnl_heatmap('put', put_purchase_price), use_container_width=True)
 
 st.markdown("""
-<h2 style='color: #ffffff; font-size: 24px;'>7. Monte Carlo Simulation</h2>
+<h2 style='color: #ff4b4b; font-size: 24px;'>7. Monte Carlo Simulation</h2>
 <p style='font-size: 16px;'>Simulating thousands of potential price paths to estimate future option values. Helps understand the range of possible outcomes and their probabilities.</p>
 """, unsafe_allow_html=True)
 
