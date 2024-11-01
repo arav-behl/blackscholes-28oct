@@ -19,35 +19,27 @@ st.set_page_config(
 # Custom CSS for a more professional look
 st.markdown("""
 <style>
+    /* Remove background color overrides */
     .reportview-container {
-        background: #0e1117;
+        background: transparent;
     }
     .main {
-        background: #0e1117;
-        color: #ffffff;
+        background: transparent;
     }
+    
+    /* Button styling */
     .stButton>button {
         background-color: #4CAF50;
         color: white;
         font-weight: bold;
     }
-    .stTextInput>div>div>input {
-        background-color: #262730;
-        color: #ffffff;
+    
+    /* Remove text color overrides */
+    h1, h2, h3, p, .Widget>label {
+        color: inherit;
     }
-    h1 {
-        color: #ffffff;
-        font-weight: bold;
-    }
-    h2, h3 {
-        color: #ffffff;
-    }
-    .sidebar .sidebar-content {
-        background-color: #262730;
-    }
-    .Widget>label {
-        color: #ffffff;
-    }
+    
+    /* Slider styling */
     .stSlider>div>div>div>div {
         background-color: #4CAF50;
     }
@@ -56,8 +48,7 @@ st.markdown("""
 
 # Sidebar
 with st.sidebar:
-    colored_title = f'<p style="color:#ff4b4b; font-family:sans-serif; font-size: 32px; font-weight: bold;">📈 Advanced Option Analytics</p>'
-    st.markdown(colored_title, unsafe_allow_html=True)
+    st.title("📈 Advanced Option Analytics")
     st.write("Developed by [Arav Behl](https://www.linkedin.com/in/arav-behl-0524a6230/)")
     
     # Input parameters
@@ -72,8 +63,7 @@ with st.sidebar:
     market_price = st.number_input("Current Market Price of the Option", value=10.0, step=0.01)
     
     st.markdown("---")
-    heatmap_para = f'<p style="color:#ff4b4b; font-family:sans-serif; font-size: 32px; font-weight: bold;">Heatmap Parameters</p>'
-    st.markdown(heatmap_para, unsafe_allow_html=True)
+    st.title("Heatmap Parameters")
     spot_min = st.number_input('Min Spot Price', min_value=0.01, value=current_price*0.8, step=0.01)
     spot_max = st.number_input('Max Spot Price', min_value=0.01, value=current_price*1.2, step=0.01)
     call_purchase_price = st.number_input("Call Purchase Price", value=10.0, step=0.01)
@@ -85,13 +75,11 @@ with st.sidebar:
     vol_range = np.linspace(vol_min, vol_max, 20)
 
 # Main content
-st.markdown("<h1>Advanced Option Analytics Platform</h1>", unsafe_allow_html=True)
+st.title("Advanced Option Analytics Platform")
 
 # Main sections with descriptions
-st.markdown("""
-<h2 style='color: #ff4b4b; font-size: 24px;'>1. Calculating Implied Volatility</h2>
-<p style='font-size: 16px;'>Using market prices to reverse-engineer the market's expectation of future volatility. This helps us understand market sentiment and price options more accurately.</p>
-""", unsafe_allow_html=True)
+st.header("1. Calculating Implied Volatility")
+st.write("Using market prices to reverse-engineer the market's expectation of future volatility. This helps us understand market sentiment and price options more accurately.")
 
 # Calculate option prices and Greeks
 bs_model = BlackScholes(
@@ -112,10 +100,8 @@ if implied_vol is not None and not np.isnan(implied_vol):
 else:
     st.metric("Implied Volatility", "Calculation Error")
 
-st.markdown("""
-<h2 style='color: #ff4b4b; font-size: 24px;'>2. Black-Scholes Option Pricing</h2>
-<p style='font-size: 16px;'>Computing theoretical prices for both Call and Put options using the Black-Scholes model with our calculated implied volatility. This gives us a benchmark for market prices.</p>
-""", unsafe_allow_html=True)
+st.header("2. Black-Scholes Option Pricing")
+st.write("Computing theoretical prices for both Call and Put options using the Black-Scholes model with our calculated implied volatility. This gives us a benchmark for market prices.")
 
 # Display key metrics
 col1, col2 = st.columns(2)
@@ -124,11 +110,8 @@ with col1:
 with col2:
     st.metric("Put Price", f"${bs_model.put_price:.2f}")
 
-st.markdown("""
-<h2 style='color: #ff4
-b4b; font-size: 24px;'>3. Option Greeks Analysis</h2>
-<p style='font-size: 16px;'>Calculating Delta, Gamma, Vega, Theta, and Rho to understand option price sensitivity to various market factors. Essential for risk management and portfolio hedging.</p>
-""", unsafe_allow_html=True)
+st.header("3. Option Greeks Analysis")
+st.write("Calculating Delta, Gamma, Vega, Theta, and Rho to understand option price sensitivity to various market factors. Essential for risk management and portfolio hedging.")
 
 # Greeks and additional metrics
 st.markdown("""
@@ -146,10 +129,8 @@ greeks_df = pd.DataFrame({
 })
 st.table(greeks_df.set_index("Metric").style.format("{:.4f}"))
 
-st.markdown("""
-<h2 style='color: #ff4b4b !important; font-size: 24px; font-weight: 600;'>4. Option Payoff Diagram</h2>
-<p style='font-size: 16px;'>Visualizing potential profit/loss scenarios at expiration across different underlying prices. Helps understand maximum profit, loss, and breakeven points.</p>
-""", unsafe_allow_html=True)
+st.header("4. Option Payoff Diagram")
+st.write("Visualizing potential profit/loss scenarios at expiration across different underlying prices. Helps understand maximum profit, loss, and breakeven points.")
 
 # Interactive Payoff Diagram
 st.subheader("Option Payoff Diagram")
@@ -168,10 +149,8 @@ fig.update_layout(
 )
 st.plotly_chart(fig, use_container_width=True)
 
-st.markdown("""
-<h2 style='color: #ff4b4b; font-size: 24px;'>5. Sensitivity Analysis</h2>
-<p style='font-size: 16px;'>Examining how option prices change with variations in key parameters. Critical for understanding option price behavior under different market conditions.</p>
-""", unsafe_allow_html=True)
+st.header("5. Sensitivity Analysis")
+st.write("Examining how option prices change with variations in key parameters. Critical for understanding option price behavior under different market conditions.")
 
 # Sensitivity Analysis
 st.subheader("Sensitivity Analysis")
@@ -226,10 +205,8 @@ fig.update_layout(
 )
 st.plotly_chart(fig, use_container_width=True)
 
-st.markdown("""
-<h2 style='color: #ff4b4b; font-size: 24px;'>6. Option P&L Heatmaps</h2>
-<p style='font-size: 16px;'>Two-dimensional visualization of profit/loss across different price and volatility levels. Provides insights into option performance under various market scenarios.</p>
-""", unsafe_allow_html=True)
+st.header("6. Option P&L Heatmaps")
+st.write("Two-dimensional visualization of profit/loss across different price and volatility levels. Provides insights into option performance under various market scenarios.")
 
 # Heatmaps for Call and Put P&L
 st.subheader("Option P&L Heatmaps")
@@ -297,10 +274,8 @@ with col1:
 with col2:
     st.plotly_chart(plot_pnl_heatmap('put', put_purchase_price), use_container_width=True)
 
-st.markdown("""
-<h2 style='color: #ff4b4b; font-size: 24px;'>7. Monte Carlo Simulation</h2>
-<p style='font-size: 16px;'>Simulating thousands of potential price paths to estimate future option values. Helps understand the range of possible outcomes and their probabilities.</p>
-""", unsafe_allow_html=True)
+st.header("7. Monte Carlo Simulation")
+st.write("Simulating thousands of potential price paths to estimate future option values. Helps understand the range of possible outcomes and their probabilities.")
 
 # Monte Carlo Simulation
 st.subheader("Monte Carlo Simulation")
