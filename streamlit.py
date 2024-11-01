@@ -87,16 +87,7 @@ with st.sidebar:
 st.markdown("<h1 style='color: #ff4b4b;'>Advanced Option Analytics Platform</h1>", unsafe_allow_html=True)
 
 # Add a concise description for users
-st.markdown("""
-Welcome to the Advanced Option Analytics Platform! Here, you can explore and analyze options by adjusting various parameters:
-- **Current Asset Price, Strike Price, Time to Maturity, Interest Rate, and Dividend Yield**: Use these inputs to calculate the Call and Put prices, along with their Greeks.
-- **Heatmap Parameters**: Adjust the Min and Max Spot Price, Volatility and market price you set to visualize the P&L heatmap, showing how these factors affect option profitability.
-- **Sensitivity Analysis**: Select a parameter to see how changes impact option pricing.
-- **Monte Carlo Simulation**: Run simulations to estimate future asset prices and option values.
-- **Implied Volatility**: Automatically calculated based on the theoretical model and market prices.
-
-Tweak these values to gain insights into option pricing dynamics and risk management.
-""")
+st.markdown(""" 1. Calculating Implied Volatility""")
 
 # Calculate option prices and Greeks
 bs_model = BlackScholes(
