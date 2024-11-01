@@ -114,14 +114,7 @@ st.header("3. Option Greeks Analysis")
 st.write("Calculating Delta, Gamma, Vega, Theta, and Rho to understand option price sensitivity to various market factors. Essential for risk management and portfolio hedging.")
 
 # Greeks and additional metrics
-st.markdown("""
-    <style>
-    .red-header {
-        color: #ff4b4b !important;
-    }
-    </style>
-    <h3 class='red-header'>Option Greeks and Metrics</h3>
-    """, unsafe_allow_html=True)
+st.subheader("Option Greeks and Metrics")
 greeks_df = pd.DataFrame({
     "Metric": ["Delta", "Gamma", "Vega", "Theta", "Rho"],
     "Call": [bs_model.call_delta, bs_model.call_gamma, bs_model.call_vega, bs_model.call_theta, bs_model.call_rho],
