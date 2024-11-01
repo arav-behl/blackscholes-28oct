@@ -9,25 +9,23 @@ class BlackScholes:
         time_to_maturity: float,
         strike: float,
         current_price: float,
-        volatility: float,
         interest_rate: float,
         dividend_yield: float = 0.0,
     ):
         self.time_to_maturity = time_to_maturity
         self.strike = strike
         self.current_price = current_price
-        self.volatility = volatility
         self.interest_rate = interest_rate
         self.dividend_yield = dividend_yield
         self.implied_volatility = None
 
-    def run(self):
+    def run(self, volatility=0.2):
         S = self.current_price
         K = self.strike
         T = self.time_to_maturity
         r = self.interest_rate
         q = self.dividend_yield
-        sigma = self.volatility
+        sigma = volatility
 
         d1 = (log(S / K) + (r - q + 0.5 * sigma ** 2) * T) / (sigma * sqrt(T))
         d2 = d1 - sigma * sqrt(T)
@@ -63,27 +61,17 @@ class BlackScholes:
 
     def calculate_implied_volatility(self, market_price=None, option_type='call'):
         """
-        Calculate implied volatility using the Newton-Raphson method.
+        Calculate implied volatility using the Brent's method.
         market_price: The observed market price of the option
         option_type: 'call' or 'put'
         """
         if market_price is None:
-            # If no market price provided, use theoretical price (for testing)
-            self.run()
-            market_price = self.call_price if option_type == 'call' else self.put_price
+            raise ValueError("Market price must be provided to calculate implied volatility.")
 
         def option_price_diff(sigma):
             """Calculate difference between market price and BS price for a given volatility"""
-            temp_model = BlackScholes(
-                self.time_to_maturity,
-                self.strike,
-                self.current_price,
-                sigma,
-                self.interest_rate,
-                self.dividend_yield
-            )
-            temp_model.run()
-            model_price = temp_model.call_price if option_type == 'call' else temp_model.put_price
+            self.run(volatility=sigma)
+            model_price = self.call_price if option_type == 'call' else self.put_price
             return model_price - market_price
 
         try:
@@ -105,7 +93,6 @@ if __name__ == "__main__":
         time_to_maturity=1,
         strike=100,
         current_price=100,
-        volatility=0.2,
         interest_rate=0.05,
         dividend_yield=0.02
     )
@@ -122,5 +109,5 @@ if __name__ == "__main__":
     print(f"Put Rho: {bs.put_rho:.4f}")
     
     # Calculate implied volatility
-    implied_vol = bs.calculate_implied_volatility()
+    implied_vol = bs.calculate_implied_volatility(market_price=10.0)
     print(f"Implied Volatility: {implied_vol:.4f}")
