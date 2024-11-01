@@ -97,9 +97,17 @@ Tweak these values to gain insights into option pricing dynamics and risk manage
 """)
 
 # Calculate option prices and Greeks
-bs_model = BlackScholes(time_to_maturity, strike, current_price, interest_rate, dividend_yield)
-bs_model.run()
-implied_vol = bs_model.calculate_implied_volatility(market_price=market_price)  # Calculate and store implied volatility
+bs_model = BlackScholes(
+    time_to_maturity=time_to_maturity,
+    strike=strike,
+    current_price=current_price,
+    interest_rate=interest_rate,
+    dividend_yield=dividend_yield
+)
+# First calculate implied volatility
+implied_vol = bs_model.calculate_implied_volatility(market_price=market_price)
+# Then run with the implied volatility
+bs_model.run(volatility=implied_vol if implied_vol is not None else 0.2)
 
 # Display key metrics
 col1, col2, col3, col4 = st.columns(4)
@@ -155,13 +163,34 @@ put_prices = []
 
 for param in param_range:
     if selected_param == 'Spot Price':
-        bs_temp = BlackScholes(time_to_maturity, strike, current_price * param, interest_rate, dividend_yield)
+        bs_temp = BlackScholes(
+            time_to_maturity=time_to_maturity,
+            strike=strike,
+            current_price=current_price * param,
+            interest_rate=interest_rate,
+            dividend_yield=dividend_yield
+        )
     elif selected_param == 'Time to Maturity':
-        bs_temp = BlackScholes(time_to_maturity * param, strike, current_price, interest_rate, dividend_yield)
+        bs_temp = BlackScholes(
+            time_to_maturity=time_to_maturity * param,
+            strike=strike,
+            current_price=current_price,
+            interest_rate=interest_rate,
+            dividend_yield=dividend_yield
+        )
     else:  # Interest Rate
-        bs_temp = BlackScholes(time_to_maturity, strike, current_price, interest_rate * param, dividend_yield)
+        bs_temp = BlackScholes(
+            time_to_maturity=time_to_maturity,
+            strike=strike,
+            current_price=current_price,
+            interest_rate=interest_rate * param,
+            dividend_yield=dividend_yield
+        )
     
-    bs_temp.run()
+    # Calculate implied vol first
+    implied_vol = bs_temp.calculate_implied_volatility(market_price=market_price)
+    # Then run with the implied volatility
+    bs_temp.run(volatility=implied_vol if implied_vol is not None else 0.2)
     call_prices.append(bs_temp.call_price)
     put_prices.append(bs_temp.put_price)
 
@@ -184,15 +213,21 @@ def plot_pnl_heatmap(option_type, purchase_price):
     pnl = np.zeros((len(vol_range), len(spot_range)))
     for i, vol in enumerate(vol_range):
         for j, spot in enumerate(spot_range):
-            bs_temp = BlackScholes(time_to_maturity, strike, spot, vol, interest_rate, dividend_yield)
-            bs_temp.run()
+            bs_temp = BlackScholes(
+                time_to_maturity=time_to_maturity,
+                strike=strike,
+                current_price=spot,
+                interest_rate=interest_rate,
+                dividend_yield=dividend_yield
+            )
+            bs_temp.run(volatility=vol)
             if option_type == 'call':
                 current_price = bs_temp.call_price
-                pnl[i, j] = current_price - purchase_price  # P&L = Current Value - Purchase Price
+                pnl[i, j] = current_price - purchase_price
             else:
                 current_price = bs_temp.put_price
                 pnl[i, j] = current_price - purchase_price
-
+    
     fig = px.imshow(
         pnl,
         x=spot_range,
