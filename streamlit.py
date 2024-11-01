@@ -102,31 +102,34 @@ implied_vol = bs_model.calculate_implied_volatility(market_price=market_price)
 # Then run with the implied volatility
 bs_model.run(volatility=implied_vol if implied_vol is not None else 0.2)
 
-# Display key metrics
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.metric("Call Price", f"${bs_model.call_price:.2f}")
-with col2:
-    st.metric("Put Price", f"${bs_model.put_price:.2f}")
-with col3:
-    st.metric("Call Delta", f"{bs_model.call_delta:.4f}")
-with col4:
-    st.metric("Put Delta", f"{bs_model.put_delta:.4f}")
-
-# Greeks and additional metrics
-st.subheader("Option Greeks and Metrics")
-greeks_df = pd.DataFrame({
-    "Metric": ["Gamma", "Vega", "Theta", "Rho"],
-    "Call": [bs_model.call_gamma, bs_model.call_vega, bs_model.call_theta, bs_model.call_rho],
-    "Put": [bs_model.put_gamma, bs_model.put_vega, bs_model.put_theta, bs_model.put_rho]
-})
-st.table(greeks_df.set_index("Metric").style.format("{:.4f}"))
-
 # Display Implied Volatility separately
 if implied_vol is not None and not np.isnan(implied_vol):
     st.metric("Implied Volatility", f"{implied_vol:.4f}")
 else:
     st.metric("Implied Volatility", "Calculation Error")
+
+st.markdown(""" 2. Calculating Theoretical Prices of Call & Put using Black Scholes 
+Model """)
+
+# Display key metrics
+col1, col2 = st.columns(2)
+with col1:
+    st.metric("Call Price", f"${bs_model.call_price:.2f}")
+with col2:
+    st.metric("Put Price", f"${bs_model.put_price:.2f}")
+
+st.markdown(""" 3. Calculating the Greeks of Call & Put using Black Scholes Model """)
+
+# Greeks and additional metrics
+st.subheader("Option Greeks and Metrics")
+greeks_df = pd.DataFrame({
+    "Metric": ["Delta", "Gamma", "Vega", "Theta", "Rho"],
+    "Call": [bs_model.call_delta, bs_model.call_gamma, bs_model.call_vega, bs_model.call_theta, bs_model.call_rho],
+    "Put": [bs_model.put_delta, bs_model.put_gamma, bs_model.put_vega, bs_model.put_theta, bs_model.put_rho]
+})
+st.table(greeks_df.set_index("Metric").style.format("{:.4f}"))
+
+
 
 # Interactive Payoff Diagram
 st.subheader("Option Payoff Diagram")
