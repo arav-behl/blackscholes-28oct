@@ -68,15 +68,14 @@ with st.sidebar:
     time_to_maturity = st.number_input("Time to Maturity (Years)", value=1.0, step=0.01)
     interest_rate = st.number_input("Risk-Free Interest Rate", value=0.05, step=0.01)
     dividend_yield = st.number_input("Dividend Yield", value=0.0, step=0.01)
-
+    call_purchase_price = st.number_input("Call Purchase Price", value=10.0, step=0.01)
+    put_purchase_price = st.number_input("Put Purchase Price", value=5.0, step=0.01)
     
     # New input for market price
     market_price = st.number_input("Current Market Price of the Option", value=10.0, step=0.01)
     
     st.markdown("---")
     st.subheader("Heatmap Parameters")
-    call_purchase_price = st.number_input("Call Purchase Price", value=10.0, step=0.01)
-    put_purchase_price = st.number_input("Put Purchase Price", value=5.0, step=0.01)
     spot_min = st.number_input('Min Spot Price', min_value=0.01, value=current_price*0.8, step=0.01)
     spot_max = st.number_input('Max Spot Price', min_value=0.01, value=current_price*1.2, step=0.01)
     vol_min = st.slider('Min Volatility', min_value=0.01, max_value=1.0, value=0.1, step=0.01)
