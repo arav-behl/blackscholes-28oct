@@ -16,40 +16,43 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded")
 
-# Custom CSS for a more professional look
+# Custom CSS for better visibility in both light and dark modes
 st.markdown("""
 <style>
     .reportview-container {
-        background: #0e1117;
+        background: #f0f2f6; /* Light background for better contrast */
     }
     .main {
-        background: #0e1117;
-        color: #ffffff;
+        background: #ffffff; /* White background for main content */
+        color: #333333; /* Dark text for readability */
     }
     .stButton>button {
         background-color: #4CAF50;
         color: white;
         font-weight: bold;
+        border-radius: 5px;
     }
     .stTextInput>div>div>input {
-        background-color: #262730;
-        color: #ffffff;
+        background-color: #ffffff;
+        color: #333333;
+        border: 1px solid #cccccc;
     }
-    h1 {
-        color: #ffffff;
-        font-weight: bold;
-    }
-    h2, h3 {
-        color: #ffffff;
+    h1, h2, h3 {
+        color: #333333; /* Dark text for headings */
     }
     .sidebar .sidebar-content {
-        background-color: #262730;
+        background-color: #f8f9fa; /* Light sidebar background */
     }
     .Widget>label {
-        color: #ffffff;
+        color: #333333; /* Dark text for widget labels */
     }
     .stSlider>div>div>div>div {
         background-color: #4CAF50;
+    }
+    .stMetric {
+        background-color: #e9ecef; /* Light background for metrics */
+        border-radius: 5px;
+        padding: 10px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -65,15 +68,14 @@ with st.sidebar:
     time_to_maturity = st.number_input("Time to Maturity (Years)", value=1.0, step=0.01)
     interest_rate = st.number_input("Risk-Free Interest Rate", value=0.05, step=0.01)
     dividend_yield = st.number_input("Dividend Yield", value=0.0, step=0.01)
-   
+    call_purchase_price = st.number_input("Call Purchase Price", value=10.0, step=0.01)
+    put_purchase_price = st.number_input("Put Purchase Price", value=5.0, step=0.01)
     
     # New input for market price
     market_price = st.number_input("Current Market Price of the Option", value=10.0, step=0.01)
     
     st.markdown("---")
     st.subheader("Heatmap Parameters")
-    call_purchase_price = st.number_input("Call Purchase Price", value=10.0, step=0.01)
-    put_purchase_price = st.number_input("Put Purchase Price", value=5.0, step=0.01)
     spot_min = st.number_input('Min Spot Price', min_value=0.01, value=current_price*0.8, step=0.01)
     spot_max = st.number_input('Max Spot Price', min_value=0.01, value=current_price*1.2, step=0.01)
     vol_min = st.slider('Min Volatility', min_value=0.01, max_value=1.0, value=0.1, step=0.01)
@@ -141,7 +143,7 @@ fig.update_layout(
     title='Option Payoff Diagram',
     xaxis_title='Spot Price',
     yaxis_title='Profit/Loss',
-    template="plotly_dark"
+    template="plotly_white"  # Use a light template for better contrast
 )
 st.plotly_chart(fig, use_container_width=True)
 
@@ -173,7 +175,7 @@ fig.update_layout(
     title=f'Option Price Sensitivity to {selected_param}',
     xaxis_title=f'{selected_param} (relative to current)',
     yaxis_title='Option Price',
-    template="plotly_dark"
+    template="plotly_white"  # Use a light template for better contrast
 )
 st.plotly_chart(fig, use_container_width=True)
 
@@ -210,7 +212,7 @@ def plot_pnl_heatmap(option_type, purchase_price):
             title="P&L",
             tickprefix="$",
         ),
-        template="plotly_dark",
+        template="plotly_white",  # Use a light template for better contrast
         xaxis_title="Spot Price",
         yaxis_title="Volatility",
     )
@@ -223,7 +225,7 @@ def plot_pnl_heatmap(option_type, purchase_price):
                 y=vol_range[i],
                 text=f"{pnl[i, j]:.2f}",
                 showarrow=False,
-                font=dict(size=8, color="white")
+                font=dict(size=8, color="black")  # Dark text for better contrast
             )
     
     return fig
@@ -233,6 +235,7 @@ with col1:
 
 with col2:
     st.plotly_chart(plot_pnl_heatmap('put', put_purchase_price), use_container_width=True)
+
 # Monte Carlo Simulation
 st.subheader("Monte Carlo Simulation")
 num_simulations = st.slider("Number of Simulations", min_value=1000, max_value=10000, value=5000, step=1000)
@@ -256,7 +259,7 @@ fig.update_layout(
     title='Monte Carlo Simulation of Asset Price Paths',
     xaxis_title='Time Steps',
     yaxis_title='Asset Price',
-    template="plotly_dark"
+    template="plotly_white"  # Use a light template for better contrast
 )
 st.plotly_chart(fig, use_container_width=True)
 
