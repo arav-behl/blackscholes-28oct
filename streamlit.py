@@ -220,6 +220,7 @@ def plot_pnl_heatmap(option_type, purchase_price):
                 interest_rate=interest_rate,
                 dividend_yield=dividend_yield
             )
+            implied_vol = bs_temp.calculate_implied_volatility(market_price=market_price)
             bs_temp.run(volatility=vol)
             if option_type == 'call':
                 current_price = bs_temp.call_price
@@ -281,7 +282,16 @@ def simulate_price_path(S, T, r, sigma, steps):
         price_path.append(S)
     return price_path
 
-simulated_paths = [simulate_price_path(current_price, time_to_maturity, interest_rate, 0.2, num_steps) for _ in range(num_simulations)]
+# Update Monte Carlo simulation to use implied volatility
+simulated_paths = [
+    simulate_price_path(
+        current_price, 
+        time_to_maturity, 
+        interest_rate, 
+        implied_vol if implied_vol is not None else 0.2,  # Use implied vol
+        num_steps
+    ) for _ in range(num_simulations)
+]
 
 fig = go.Figure()
 for path in simulated_paths[:100]:  # Plot first 100 paths
