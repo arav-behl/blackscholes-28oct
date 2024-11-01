@@ -56,7 +56,8 @@ st.markdown("""
 
 # Sidebar
 with st.sidebar:
-    st.markdown("<h1 style='color: #ff4b4b;'>📈 Advanced Option Analytics</h1>", unsafe_allow_html=True)
+    colored_title = f'<p style="color:#ff4b4b; font-family:sans-serif; font-size: 32px; font-weight: bold;">📈 Advanced Option Analytics</p>'
+    st.markdown(colored_title, unsafe_allow_html=True)
     st.write("Developed by [Arav Behl](https://www.linkedin.com/in/arav-behl-0524a6230/)")
     
     # Input parameters
