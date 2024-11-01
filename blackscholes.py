@@ -9,19 +9,25 @@ class BlackScholes:
         time_to_maturity: float,
         strike: float,
         current_price: float,
-        volatility: float,
         interest_rate: float,
         dividend_yield: float = 0.0,
     ):
         self.time_to_maturity = time_to_maturity
         self.strike = strike
         self.current_price = current_price
-        self.volatility = volatility
         self.interest_rate = interest_rate
         self.dividend_yield = dividend_yield
         self.implied_volatility = None
+        self.volatility = None
 
-    def run(self):
+    def run(self, volatility=None):
+        if volatility is None and self.implied_volatility is not None:
+            self.volatility = self.implied_volatility
+        elif volatility is not None:
+            self.volatility = volatility
+        else:
+            raise ValueError("Either provide volatility or calculate implied volatility first")
+            
         S = self.current_price
         K = self.strike
         T = self.time_to_maturity
@@ -78,11 +84,10 @@ class BlackScholes:
                 self.time_to_maturity,
                 self.strike,
                 self.current_price,
-                sigma,
                 self.interest_rate,
                 self.dividend_yield
             )
-            temp_model.run()
+            temp_model.run(volatility=sigma)
             model_price = temp_model.call_price if option_type == 'call' else temp_model.put_price
             return model_price - market_price
 
@@ -105,7 +110,6 @@ if __name__ == "__main__":
         time_to_maturity=1,
         strike=100,
         current_price=100,
-        volatility=0.2,
         interest_rate=0.05,
         dividend_yield=0.02
     )
