@@ -56,7 +56,7 @@ st.markdown("""
 
 # Sidebar
 with st.sidebar:
-    st.title("📈 Advanced Option Analytics")
+    st.markdown("<h1 style='color: #ff4b4b;'>📈 Advanced Option Analytics</h1>", unsafe_allow_html=True)
     st.write("Developed by [Arav Behl](https://www.linkedin.com/in/arav-behl-0524a6230/)")
     
     # Input parameters
@@ -82,7 +82,7 @@ with st.sidebar:
     vol_range = np.linspace(vol_min, vol_max, 20)
 
 # Main content
-st.title("Advanced Option Analytics Platform")
+st.markdown("<h1 style='color: #ff4b4b;'>Advanced Option Analytics Platform</h1>", unsafe_allow_html=True)
 
 # Add a concise description for users
 st.markdown("""
