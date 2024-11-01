@@ -85,7 +85,7 @@ with st.sidebar:
     vol_range = np.linspace(vol_min, vol_max, 20)
 
 # Main content
-st.markdown("<h1'>Advanced Option Analytics Platform</h1>", unsafe_allow_html=True)
+st.markdown("<h1>Advanced Option Analytics Platform</h1>", unsafe_allow_html=True)
 
 # Main sections with descriptions
 st.markdown("""
@@ -125,12 +125,20 @@ with col2:
     st.metric("Put Price", f"${bs_model.put_price:.2f}")
 
 st.markdown("""
-<h2 style='color: #ff4b4b; font-size: 24px;'>3. Option Greeks Analysis</h2>
+<h2 style='color: #ff4
+b4b; font-size: 24px;'>3. Option Greeks Analysis</h2>
 <p style='font-size: 16px;'>Calculating Delta, Gamma, Vega, Theta, and Rho to understand option price sensitivity to various market factors. Essential for risk management and portfolio hedging.</p>
 """, unsafe_allow_html=True)
 
 # Greeks and additional metrics
-st.subheader("Option Greeks and Metrics")
+st.markdown("""
+    <style>
+    .red-header {
+        color: #ff4b4b !important;
+    }
+    </style>
+    <h3 class='red-header'>Option Greeks and Metrics</h3>
+    """, unsafe_allow_html=True)
 greeks_df = pd.DataFrame({
     "Metric": ["Delta", "Gamma", "Vega", "Theta", "Rho"],
     "Call": [bs_model.call_delta, bs_model.call_gamma, bs_model.call_vega, bs_model.call_theta, bs_model.call_rho],
@@ -139,7 +147,7 @@ greeks_df = pd.DataFrame({
 st.table(greeks_df.set_index("Metric").style.format("{:.4f}"))
 
 st.markdown("""
-<h2 style='color: #ff4b4b; font-size: 24px;'>4. Option Payoff Diagram</h2>
+<h2 style='color: #ff4b4b !important; font-size: 24px; font-weight: 600;'>4. Option Payoff Diagram</h2>
 <p style='font-size: 16px;'>Visualizing potential profit/loss scenarios at expiration across different underlying prices. Helps understand maximum profit, loss, and breakeven points.</p>
 """, unsafe_allow_html=True)
 
